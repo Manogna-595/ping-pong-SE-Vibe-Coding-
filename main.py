@@ -1,8 +1,11 @@
+# In main.py
+
 import pygame
 from game.game_engine import GameEngine
 
 # Initialize pygame/Start application
 pygame.init()
+pygame.mixer.init()
 
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
@@ -28,10 +31,16 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        engine.handle_input()
-        engine.update()
-        engine.render(SCREEN)
+        # --- Updated game loop logic ---
+        if engine.game_state == "playing":
+            engine.handle_input()
+            engine.update()
+        elif engine.game_state == "replay":
+            # The handle_replay_input method will return False if ESC is pressed
+            running = engine.handle_replay_input()
+        # --------------------------------
 
+        engine.render(SCREEN) # Always render the current state
         pygame.display.flip()
         clock.tick(FPS)
 
